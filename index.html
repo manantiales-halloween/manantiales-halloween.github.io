@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Halloween en Campos y Pampas de Manantiales</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Fredoka:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F5EFFB; --surface:#FFFFFF; --ink:#24113F; --muted:#5A4485; --line:#CDBFE6;
+  --street:#FFFFFF; --blk:#DED3EF; --blk-s:#8C77B3; --grn:#C4E5B8; --grn-s:#6FA862; --grn-t:#2F5E27;
+  --eqp:#ECE8F1; --eqp-s:#A69CB6; --eqp-t:#4F465C; --lbl:#4A3670;
+  --pk:#F47B20; --pk-s:#7A3300; --stem:#2F6B2A; --lot:#FFB25E; --lot-s:#B04A00; --lot-on:#FFD25E;
+  --face:#FFF1A6; --accent:#C9530A; --btn:#3B1F5E; --btn-t:#FFFFFF; --row:#FFFFFF; --row-on:#FFF3D6;
+  color-scheme: light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#160D29; --surface:#21143A; --ink:#F4EDFF; --muted:#C7B6EC; --line:#3D2C63;
+    --street:#1B1131; --blk:#33245A; --blk-s:#5F4E8E; --grn:#21402A; --grn-s:#3E7A47; --grn-t:#B9E6AC;
+    --eqp:#2A2140; --eqp-s:#5A4F70; --eqp-t:#CFC6DE; --lbl:#CDBDF2;
+    --pk:#D2661A; --pk-s:#5E2600; --stem:#5FA356; --lot:#9C5418; --lot-s:#E08A3C; --lot-on:#F2B640;
+    --face:#FFF1A6; --accent:#FF9A4D; --btn:#F4EDFF; --btn-t:#1B1131; --row:#21143A; --row-on:#3A2A12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#160D29; --surface:#21143A; --ink:#F4EDFF; --muted:#C7B6EC; --line:#3D2C63;
+  --street:#1B1131; --blk:#33245A; --blk-s:#5F4E8E; --grn:#21402A; --grn-s:#3E7A47; --grn-t:#B9E6AC;
+  --eqp:#2A2140; --eqp-s:#5A4F70; --eqp-t:#CFC6DE; --lbl:#CDBDF2;
+  --pk:#D2661A; --pk-s:#5E2600; --stem:#5FA356; --lot:#9C5418; --lot-s:#E08A3C; --lot-on:#F2B640;
+  --face:#FFF1A6; --accent:#FF9A4D; --btn:#F4EDFF; --btn-t:#1B1131; --row:#21143A; --row-on:#3A2A12;
+  color-scheme: dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px); background:var(--bg)}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:Fredoka,"Trebuchet MS",system-ui,sans-serif; font-size:17px; line-height:1.4}
+main{max-width:1100px; margin:0 auto; padding:20px 16px 40px}
+header{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:8px 24px}
+.where{margin:0; color:var(--muted); font-weight:600; font-size:16px}
+h1{margin:2px 0 0; font-family:Creepster,Fredoka,sans-serif; font-weight:400; font-size:clamp(42px,9vw,64px); line-height:1; color:var(--accent); letter-spacing:.01em}
+.how{margin:10px 0 0; max-width:36em}
+.score{display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-width:220px}
+.count{margin:0; font-size:22px; font-weight:700}
+.count b{font-size:34px; color:var(--accent)}
+.bar{width:100%; max-width:320px; height:14px; border-radius:7px; background:var(--line); overflow:hidden}
+.bar span{display:block; height:100%; width:0; background:linear-gradient(90deg,#F47B20,#FFC94A); border-radius:7px; transition:width .35s ease}
+.next{margin:18px 0 12px; display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; padding:12px 14px; border:2px dashed var(--line); border-radius:14px}
+.next p{margin:0; font-weight:500}
+.next strong{font-weight:700}
+button{font:inherit; cursor:pointer}
+.btn{border:0; border-radius:12px; background:var(--btn); color:var(--btn-t); font-weight:600; padding:10px 16px; min-height:44px}
+.btn:focus-visible,.row:focus-visible,.reset:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.done{margin:18px 0 12px; padding:16px; border-radius:14px; background:var(--row-on); font-size:20px; font-weight:700; text-align:center}
+.mapwrap{position:relative; overflow-x:auto; border:2px solid var(--line); border-radius:18px; background:var(--street); -webkit-overflow-scrolling:touch}
+.mapwrap svg{display:block; width:100%; min-width:940px; height:auto}
+.hint{margin:6px 2px 0; font-size:14px; color:var(--muted)}
+.street{fill:var(--street)}
+.blk{fill:var(--blk); stroke:var(--blk-s); stroke-width:1}
+.grn{fill:var(--grn); stroke:var(--grn-s); stroke-width:1}
+.eqp{fill:var(--eqp); stroke:var(--eqp-s); stroke-width:1; stroke-dasharray:3 2}
+.lbl{fill:var(--lbl); font-size:10.5px; font-weight:600}
+.lbl-g{fill:var(--grn-t); font-size:11px; font-weight:600}
+.lbl-e{fill:var(--eqp-t); font-size:6.6px; font-weight:500}
+.barrio{fill:var(--muted); font-size:17px; font-weight:600; letter-spacing:1px}
+.gate circle{fill:var(--btn); stroke:var(--street); stroke-width:1.6}
+.gate line{stroke:var(--btn-t); stroke-width:1.6; stroke-linecap:round}
+.gate path{fill:#FFB25E}
+.gate-t{fill:var(--ink); font-size:10.5px; font-weight:700}
+.gate-s{fill:var(--ink); font-size:9.5px; font-weight:500}
+.lot{fill:var(--lot); stroke:var(--lot-s); stroke-width:1.3; transition:fill .3s}
+.lot.on{fill:var(--lot-on)}
+.ptr{stroke:var(--ink); stroke-width:1.5}
+.dot{fill:var(--ink)}
+.pk{cursor:pointer; outline:none}
+.pk .hit{fill:transparent}
+.pk .stem{fill:none; stroke:var(--stem); stroke-width:2; stroke-linecap:round}
+.pk .body ellipse{fill:var(--pk); stroke:var(--pk-s); stroke-width:.8}
+.pk .num{fill:#24113F; font-weight:700}
+.pk .face{display:none}
+.pk .face path{fill:var(--face); stroke:var(--pk-s); stroke-width:.45}
+.pk .halo{opacity:0}
+.pk .ring{fill:none; stroke:var(--accent); stroke-width:1.6; stroke-dasharray:3 2.2; opacity:0}
+.pk.next .ring{opacity:1}
+.pk.on .num{display:none}
+.pk.on .face{display:inline}
+.pk.on .body ellipse{fill:#FF9A2E}
+.pk.on .halo{opacity:1}
+.pk:focus-visible .ring{opacity:1; stroke:var(--ink); stroke-dasharray:none}
+@media (prefers-reduced-motion:no-preference){
+  .pk.next .ring{animation:spin 6s linear infinite; transform-origin:0 0}
+  .pk.pop .body,.pk.pop .face{animation:pop .45s ease}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
+}
+h2{margin:28px 0 10px; font-size:22px}
+.list{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:8px}
+.row{width:100%; display:flex; align-items:center; gap:12px; text-align:left; border:2px solid var(--line); border-radius:14px; background:var(--row); color:var(--ink); padding:8px 12px; min-height:56px}
+.row[aria-pressed="true"]{background:var(--row-on); border-color:#F2B640}
+.row svg{flex:none; width:38px; height:35px}
+.row .txt{flex:1; display:flex; flex-direction:column; line-height:1.2}
+.row .txt b{font-weight:600; font-size:16px}
+.row .txt small{font-size:14px; color:var(--muted)}
+.row .st{flex:none; width:28px; height:28px; border-radius:50%; border:2px solid var(--line); box-sizing:border-box; display:grid; place-items:center}
+.row .st svg{width:16px; height:16px; opacity:0}
+.row[aria-pressed="true"] .st{background:var(--accent); border-color:var(--accent)}
+.row[aria-pressed="true"] .st svg{opacity:1}
+.foot{margin-top:28px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; color:var(--muted); font-size:15px}
+.foot p{margin:0}
+.reset{border:2px solid var(--line); background:transparent; color:var(--ink); border-radius:12px; padding:10px 16px; min-height:44px; font-weight:600}
+.reset.armed{border-color:var(--accent); color:var(--accent)}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <p class="where">Campos y Pampas de Manantiales</p>
+    <h1>¡Noche de Halloween!</h1>
+    <p class="how">Cuando pases por una casa, tocá su calabaza y se enciende.</p>
+  </div>
+  <div class="score">
+    <p class="count"><b id="n">0</b> de 26 casas</p>
+    <div class="bar" aria-hidden="true"><span id="bar"></span></div>
+  </div>
+</header>
+
+<div class="next" id="next">
+  <p id="nextTxt">Próxima: <strong>calabaza 1</strong>, manzana 63, lote 18</p>
+  <button class="btn" id="show" type="button">Mostrar en el mapa</button>
+</div>
+<p class="done" id="done" hidden>¡Encendiste las 26 calabazas! Feliz Halloween.</p>
+
+<div class="mapwrap" id="map">
+<svg viewBox="-532.8 -45.3 1089.0 563.8" role="group" aria-label="Mapa de Campos y Pampas de Manantiales con las 26 casas que participan">
+<defs><radialGradient id="glow"><stop offset="0" stop-color="#FFE27A" stop-opacity="0.95"/><stop offset="0.55" stop-color="#FFC94A" stop-opacity="0.45"/><stop offset="1" stop-color="#FFB020" stop-opacity="0"/></radialGradient></defs>
+<rect class="street" x="-532.8" y="-45.3" width="1089.0" height="563.8"/>
+<path class="blk" d="M-460.5 43.4 L-460.1 246.8 L-459.4 247.8 L-458.0 248.3 L-391.9 247.9 L-390.7 247.0 L-390.3 245.8 L-391.9 4.8 L-392.8 3.9 L-393.9 3.7 L-422.5 4.2 L-443.2 16.1 L-451.9 26.2 Z"/>
+<path class="blk" d="M-379.6 5.7 L-379.3 60.0 L-378.8 61.1 L-377.6 61.9 L-260.9 61.2 L-259.7 60.3 L-259.4 59.1 L-259.8 4.0 L-260.5 2.9 L-261.9 2.5 L-378.1 3.6 L-379.3 4.5 Z"/>
+<path class="blk" d="M-245.7 4.3 L-245.4 59.2 L-244.7 60.6 L-243.4 61.2 L-3.4 59.9 L-1.9 59.1 L-1.4 57.7 L-1.7 2.0 L-2.5 0.5 L-3.9 0.0 L-243.7 2.3 L-245.0 2.9 Z"/>
+<path class="blk" d="M-460.2 264.3 L-459.6 461.4 L-459.0 466.8 L-450.1 482.0 L-441.7 491.7 L-419.0 504.3 L-390.5 504.2 L-389.3 503.3 L-388.9 502.1 L-390.3 263.5 L-391.2 262.3 L-392.4 262.0 L-458.4 262.4 L-459.7 263.2 Z"/>
+<path class="blk" d="M-245.2 75.0 L-245.0 121.0 L-244.5 122.4 L-243.2 123.1 L-65.2 122.2 L-63.8 121.7 L-63.1 120.4 L-63.3 74.4 L-63.8 73.0 L-65.1 72.2 L-243.3 73.2 L-244.5 73.7 Z"/>
+<path class="blk" d="M-182.9 136.6 L-182.7 182.6 L-182.2 184.0 L-181.1 184.7 L-64.9 184.2 L-63.5 183.7 L-62.8 182.6 L-63.0 136.4 L-63.3 135.2 L-64.5 134.3 L-181.0 134.8 L-182.3 135.5 Z"/>
+<path class="blk" d="M-182.6 198.6 L-182.3 244.6 L-182.0 245.8 L-180.8 246.7 L-64.6 246.2 L-63.3 245.8 L-62.5 244.6 L-62.6 198.4 L-63.1 197.0 L-64.2 196.3 L-180.6 196.8 L-182.0 197.5 Z"/>
+<path class="blk" d="M-181.9 324.8 L-181.6 370.8 L-181.1 372.0 L-179.9 372.8 L-63.9 372.2 L-62.5 371.7 L-61.7 370.4 L-61.9 324.4 L-62.4 323.0 L-63.7 322.2 L-180.1 322.8 L-181.3 323.5 Z"/>
+<path class="blk" d="M-243.5 386.9 L-243.3 432.9 L-242.8 434.3 L-241.5 435.1 L-63.5 434.2 L-62.1 433.6 L-61.4 432.4 L-61.6 386.3 L-62.1 385.0 L-63.4 384.2 L-241.6 385.1 L-242.8 385.6 Z"/>
+<path class="blk" d="M-244.9 137.4 L-244.1 246.0 L-243.4 246.8 L-242.1 247.2 L-195.5 246.6 L-194.6 245.7 L-194.3 244.7 L-195.2 136.1 L-195.9 135.3 L-197.1 134.9 L-243.8 135.4 L-244.7 136.3 Z"/>
+<path class="blk" d="M-244.2 263.4 L-243.4 372.0 L-242.5 372.9 L-241.4 373.1 L-194.8 372.6 L-194.0 371.9 L-193.7 370.7 L-194.5 262.1 L-195.4 261.2 L-196.5 260.9 L-243.1 261.4 L-243.9 262.1 Z"/>
+<path class="blk" d="M-377.5 387.7 L-377.3 433.7 L-376.9 434.9 L-375.7 435.8 L-259.5 435.2 L-258.3 434.9 L-257.4 433.7 L-257.6 387.4 L-258.1 386.0 L-259.1 385.3 L-375.6 385.9 L-376.7 386.4 Z"/>
+<path class="blk" d="M-377.8 325.7 L-377.6 371.7 L-377.1 373.1 L-376.1 373.8 L-259.8 373.2 L-258.4 372.7 L-257.7 371.7 L-257.9 325.4 L-258.4 324.0 L-259.5 323.3 L-375.9 323.9 L-377.1 324.4 Z"/>
+<path class="blk" d="M-378.2 263.7 L-378.0 309.7 L-377.6 310.9 L-376.4 311.8 L-260.2 311.2 L-259.0 310.9 L-258.1 309.7 L-258.2 263.4 L-258.7 262.1 L-259.8 261.3 L-376.2 261.9 L-377.4 262.4 Z"/>
+<path class="blk" d="M-379.2 75.7 L-379.0 121.7 L-378.6 122.9 L-377.4 123.8 L-261.2 123.3 L-260.0 122.9 L-259.1 121.7 L-259.3 75.5 L-259.6 74.3 L-260.8 73.4 L-377.3 73.9 L-378.6 74.6 Z"/>
+<path class="blk" d="M-243.2 448.9 L-242.9 500.7 L-242.4 502.1 L-241.1 502.8 L-1.2 500.6 L0.2 500.1 L1.0 498.8 L0.8 448.0 L0.2 446.6 L-1.0 445.8 L-241.2 447.1 L-242.4 447.6 Z"/>
+<path class="blk" d="M-377.2 449.9 L-376.9 502.1 L-376.4 503.3 L-375.1 504.1 L-259.1 503.0 L-257.7 502.5 L-257.0 501.3 L-257.2 449.4 L-257.7 448.0 L-259.0 447.3 L-375.4 447.9 L-376.6 448.5 Z"/>
+<path class="blk" d="M-51.3 74.3 L-50.3 244.5 L-49.6 245.6 L-48.2 246.1 L-1.9 245.7 L-0.7 244.9 L-0.4 243.6 L-1.6 73.0 L-2.3 72.2 L-3.5 71.9 L-50.2 72.4 L-51.0 73.3 Z"/>
+<path class="blk" d="M-50.0 312.1 L-49.1 432.9 L-48.3 433.7 L-47.1 434.1 L-0.5 433.5 L0.4 432.6 L0.7 431.6 L-0.3 311.0 L-1.0 310.2 L-2.2 309.8 L-48.6 310.3 L-49.5 310.9 Z"/>
+<path class="blk" d="M408.8 1.2 L410.2 244.8 L411.1 246.0 L412.3 246.4 L468.6 246.0 L469.8 245.1 L470.1 243.8 L469.3 102.0 L471.9 89.2 L481.0 67.9 L482.1 61.9 L481.9 43.1 L471.0 21.7 L460.9 11.1 L437.6 -1.3 L411.0 -1.1 L409.3 -0.2 Z"/>
+<path class="blk" d="M410.2 262.4 L411.5 497.6 L412.2 499.0 L413.5 499.6 L439.3 499.3 L462.6 486.1 L473.4 474.1 L484.1 455.7 L484.2 433.7 L483.1 428.2 L473.6 406.4 L471.6 400.1 L471.0 393.8 L470.2 261.8 L469.4 260.6 L468.0 260.1 L412.0 260.4 L410.7 261.2 Z"/>
+<path class="blk" d="M79.2 76.0 L79.5 122.0 L80.0 123.4 L81.2 124.1 L251.3 123.3 L252.7 122.7 L253.4 121.5 L253.2 75.4 L252.7 74.1 L251.4 73.3 L81.2 74.2 L79.8 74.8 Z"/>
+<path class="blk" d="M267.2 75.2 L267.5 121.2 L268.0 122.4 L269.2 123.1 L395.3 122.5 L396.7 122.0 L397.4 120.7 L397.2 74.7 L396.7 73.3 L395.4 72.5 L269.0 73.2 L267.8 73.8 Z"/>
+<path class="blk" d="M203.5 137.7 L204.4 246.4 L205.1 247.1 L206.3 247.5 L253.0 247.0 L253.9 246.1 L254.1 245.0 L253.3 136.4 L252.5 135.6 L251.3 135.3 L204.7 135.8 L203.9 136.5 Z"/>
+<path class="blk" d="M79.6 138.0 L79.8 184.0 L80.2 185.2 L81.4 186.1 L189.6 185.6 L191.0 185.1 L191.7 184.0 L191.5 137.8 L191.0 136.4 L190.0 135.7 L81.5 136.2 L80.2 136.8 Z"/>
+<path class="blk" d="M79.9 200.0 L80.1 246.0 L80.5 247.2 L81.7 248.1 L189.9 247.6 L191.3 247.1 L192.0 246.0 L191.9 199.8 L191.4 198.4 L190.3 197.7 L81.9 198.2 L80.5 198.8 Z"/>
+<path class="blk" d="M17.2 76.7 L18.2 247.0 L18.9 248.0 L20.3 248.5 L66.6 248.2 L67.6 247.5 L68.1 246.1 L67.2 76.5 L66.8 75.2 L65.0 74.3 L19.4 74.5 L18.2 74.9 Z"/>
+<path class="blk" d="M204.2 263.7 L204.8 371.3 L205.2 372.5 L207.0 373.5 L252.6 373.3 L253.9 372.9 L254.8 371.0 L254.2 263.4 L253.7 262.1 L252.0 261.3 L206.4 261.5 L205.0 262.0 Z"/>
+<path class="blk" d="M80.6 326.0 L80.8 372.0 L81.2 373.2 L82.4 374.1 L190.6 373.6 L192.0 373.1 L192.7 372.0 L192.6 325.8 L192.1 324.4 L191.0 323.7 L82.6 324.2 L81.4 324.7 Z"/>
+<path class="blk" d="M18.5 314.5 L19.3 435.2 L20.2 436.2 L21.4 436.5 L67.8 436.1 L68.8 435.3 L69.2 434.1 L68.3 313.6 L67.5 312.6 L66.3 312.3 L20.1 312.6 L19.0 313.3 Z"/>
+<path class="blk" d="M81.0 388.0 L81.2 434.0 L81.7 435.4 L83.0 436.1 L253.0 435.3 L254.4 434.7 L255.1 433.5 L254.9 387.4 L254.4 386.0 L253.1 385.3 L82.9 386.2 L81.7 386.7 Z"/>
+<path class="blk" d="M397.1 260.7 L270.4 261.2 L269.2 261.5 L268.5 262.3 L268.5 309.0 L268.9 310.2 L269.7 310.9 L396.3 310.5 L397.5 310.1 L398.2 309.3 L398.2 262.6 L397.9 261.4 Z"/>
+<path class="blk" d="M268.6 325.4 L268.9 371.4 L269.5 372.5 L270.8 373.1 L397.3 372.4 L398.5 371.5 L398.8 370.2 L398.5 324.0 L397.8 323.0 L396.4 322.5 L270.1 323.2 L268.9 324.1 Z"/>
+<path class="blk" d="M397.7 384.7 L271.1 385.2 L269.4 386.0 L268.9 387.4 L269.2 433.0 L270.0 434.7 L271.4 435.2 L397.0 434.5 L398.0 434.2 L398.9 433.3 L398.9 386.6 L398.5 385.4 Z"/>
+<path class="blk" d="M16.8 4.6 L17.1 60.6 L17.8 61.9 L19.1 62.5 L251.1 61.2 L252.6 60.4 L253.1 59.0 L252.8 2.4 L252.1 1.1 L250.6 0.4 L18.8 2.6 L17.4 3.3 Z"/>
+<path class="blk" d="M266.8 2.5 L267.1 59.2 L267.6 60.4 L268.9 61.1 L395.6 60.4 L396.7 59.5 L397.1 58.3 L396.7 0.6 L396.0 -0.4 L394.6 -0.9 L268.3 0.4 L267.3 1.1 Z"/>
+<path class="blk" d="M269.3 448.9 L269.5 498.7 L269.9 500.0 L271.1 500.8 L397.3 499.8 L398.7 499.2 L399.4 498.2 L399.3 448.6 L398.9 447.4 L397.7 446.6 L271.2 447.2 L269.9 447.8 Z"/>
+<path class="blk" d="M19.3 450.3 L19.5 501.1 L20.0 502.5 L21.3 503.2 L253.3 501.1 L254.7 500.6 L255.5 499.3 L255.3 449.4 L254.7 448.0 L253.5 447.3 L21.2 448.5 L20.1 449.0 Z"/>
+<path class="grn" d="M-180.1 260.8 L-181.6 261.5 L-182.2 263.0 L-182.0 308.6 L-181.6 309.8 L-180.6 310.6 L-64.2 310.2 L-63.0 309.8 L-62.2 308.8 L-62.3 262.4 L-62.6 261.1 L-63.6 260.3 Z"/>
+<path class="grn" d="M-376.7 135.9 L-378.3 136.6 L-378.9 138.1 L-378.3 245.7 L-377.7 247.3 L-376.1 247.9 L-260.5 247.3 L-259.0 246.6 L-258.3 245.0 L-258.9 137.5 L-259.6 135.9 L-261.1 135.3 Z"/>
+<path class="grn" d="M269.7 135.2 L268.2 135.8 L267.5 137.4 L268.1 245.0 L268.9 246.7 L270.3 247.2 L395.9 246.5 L397.6 245.6 L398.1 244.2 L397.5 136.7 L396.7 135.0 L395.3 134.5 Z"/>
+<path class="grn" d="M82.4 262.2 L80.9 262.8 L80.2 264.4 L80.5 310.0 L80.9 311.2 L81.9 312.0 L190.3 311.6 L191.5 311.2 L192.3 310.2 L192.2 263.8 L191.9 262.6 L190.9 261.8 Z"/>
+<path class="eqp" d="M-48.1 260.1 L-49.6 260.7 L-50.3 262.3 L-50.0 307.9 L-49.4 309.4 L-47.8 310.1 L-2.2 309.8 L-0.7 309.2 L-0.0 307.6 L-0.3 262.0 L-0.9 260.5 L-2.5 259.8 Z"/>
+<path class="eqp" d="M20.4 262.5 L18.9 263.2 L18.2 264.7 L18.5 310.3 L19.1 311.9 L20.7 312.5 L66.3 312.3 L67.8 311.6 L68.5 310.1 L68.2 264.5 L67.6 262.9 L66.0 262.3 Z"/>
+<text class="lbl-g" x="-122.1" y="289.5" text-anchor="middle">Espacio verde</text>
+<text class="lbl-g" x="-318.6" y="195.6" text-anchor="middle">Espacio verde</text>
+<text class="lbl-g" x="332.8" y="194.8" text-anchor="middle">Espacio verde</text>
+<text class="lbl-g" x="136.4" y="290.9" text-anchor="middle">Espacio verde</text>
+<text class="lbl-e" text-anchor="middle"><tspan x="-25.1" y="284.0">Equipamiento</tspan><tspan x="-25.1" y="292.5">comunitario</tspan></text>
+<text class="lbl-e" text-anchor="middle"><tspan x="43.4" y="286.4">Equipamiento</tspan><tspan x="43.4" y="294.9">comunitario</tspan></text>
+<text class="lbl" x="-424.8" y="133.4" text-anchor="middle">Mz 58</text>
+<text class="lbl" x="-319.7" y="36.1" text-anchor="middle">Mz 59</text>
+<text class="lbl" x="-123.7" y="33.7" text-anchor="middle">Mz 60</text>
+<text class="lbl" x="-424.2" y="383.7" text-anchor="middle">Mz 93</text>
+<text class="lbl" x="-153.3" y="101.9" text-anchor="middle">Mz 70</text>
+<text class="lbl" x="-123.0" y="163.9" text-anchor="middle">Mz 81</text>
+<text class="lbl" x="-122.6" y="225.9" text-anchor="middle">Mz 82</text>
+<text class="lbl" x="-121.9" y="351.9" text-anchor="middle">Mz 111</text>
+<text class="lbl" x="-151.6" y="413.8" text-anchor="middle">Mz 118</text>
+<text class="lbl" x="-218.9" y="194.6" text-anchor="middle">Mz 80</text>
+<text class="lbl" x="-218.2" y="320.6" text-anchor="middle">Mz 95</text>
+<text class="lbl" x="-317.5" y="414.9" text-anchor="middle">Mz 117</text>
+<text class="lbl" x="-317.9" y="352.9" text-anchor="middle">Mz 110</text>
+<text class="lbl" x="-318.2" y="290.9" text-anchor="middle">Mz 94</text>
+<text class="lbl" x="-319.3" y="95.0" text-anchor="middle">Mz 69</text>
+<text class="lbl" x="-121.2" y="477.5" text-anchor="middle">Mz 124</text>
+<text class="lbl" x="-317.2" y="478.9" text-anchor="middle">Mz 123</text>
+<text class="lbl" x="-25.3" y="163.6" text-anchor="middle">Mz 71</text>
+<text class="lbl" x="-24.0" y="375.5" text-anchor="middle">Mz 97</text>
+<text class="lbl" x="440.8" y="126.4" text-anchor="middle">Mz 63</text>
+<text class="lbl" x="442.2" y="383.8" text-anchor="middle">Mz 102</text>
+<text class="lbl" x="167.2" y="102.9" text-anchor="middle">Mz 73</text>
+<text class="lbl" x="293.2" y="108.2" text-anchor="middle">Mz 74</text>
+<text class="lbl" x="229.5" y="188.9" text-anchor="middle">Mz 85</text>
+<text class="lbl" x="135.5" y="165.3" text-anchor="middle">Mz 83</text>
+<text class="lbl" x="135.9" y="227.3" text-anchor="middle">Mz 84</text>
+<text class="lbl" x="43.2" y="166.0" text-anchor="middle">Mz 72</text>
+<text class="lbl" x="230.2" y="314.9" text-anchor="middle">Mz 100</text>
+<text class="lbl" x="136.6" y="353.3" text-anchor="middle">Mz 112</text>
+<text class="lbl" x="46.5" y="378.0" text-anchor="middle">Mz 98</text>
+<text class="lbl" x="174.9" y="414.9" text-anchor="middle">Mz 119</text>
+<text class="lbl" x="334.2" y="290.1" text-anchor="middle">Mz 101</text>
+<text class="lbl" x="334.6" y="358.2" text-anchor="middle">Mz 113</text>
+<text class="lbl" x="334.9" y="414.1" text-anchor="middle">Mz 120</text>
+<text class="lbl" x="134.8" y="32.1" text-anchor="middle">Mz 61</text>
+<text class="lbl" x="320.8" y="44.8" text-anchor="middle">Mz 62</text>
+<text class="lbl" x="335.2" y="478.1" text-anchor="middle">Mz 126</text>
+<text class="lbl" x="151.2" y="472.9" text-anchor="middle">Mz 125</text>
+<text class="barrio" x="-230" y="-21.3" text-anchor="middle">Campos de Manantiales</text>
+<text class="barrio" x="251" y="-21.3" text-anchor="middle">Pampas de Manantiales</text>
+<g class="gate" aria-label="Entrada principal y guardia" role="img"><circle cx="479" cy="253.2" r="9.5"/><line x1="476" y1="258.7" x2="476" y2="247.2"/><path d="M476 247.2 L484 250.2 L476 253.2 Z"/><text x="492" y="247" class="gate-t">Entrada</text><text x="492" y="258.5" class="gate-t">principal</text><text x="492" y="270" class="gate-s">(Guardia)</text></g>
+<path class="lot" data-lot="1" d="M409.5 134.4 L409.6 148.4 L434.6 148.2 L434.5 134.2 Z"/>
+<path class="lot" data-lot="2" d="M367.3 97.6 L367.4 110.1 L397.4 109.9 L397.3 97.5 Z"/>
+<path class="lot" data-lot="3" d="M339.2 72.8 L339.3 97.8 L353.3 97.7 L353.2 72.7 Z"/>
+<path class="lot" data-lot="4" d="M339.0 35.8 L339.1 60.8 L353.1 60.7 L353.0 35.7 Z"/>
+<path class="lot" data-lot="5" d="M325.3 97.8 L325.5 122.8 L339.5 122.8 L339.3 97.8 Z"/>
+<path class="lot" data-lot="6" d="M311.3 97.9 L311.5 122.9 L325.5 122.9 L325.3 97.8 Z"/>
+<path class="lot" data-lot="7" d="M267.3 85.7 L267.3 98.2 L297.3 98.0 L297.3 85.5 Z"/>
+<path class="lot" data-lot="8" d="M226.1 48.4 L226.1 61.4 L253.1 61.2 L253.0 48.2 Z"/>
+<path class="lot" data-lot="9" d="M128.0 35.9 L128.1 61.9 L142.1 61.9 L142.0 35.9 Z"/>
+<path class="lot" data-lot="10" d="M80.0 223.2 L80.1 235.7 L108.1 235.5 L108.0 223.0 Z"/>
+<path class="lot" data-lot="11" d="M203.8 191.5 L203.9 205.5 L228.9 205.4 L228.8 191.4 Z"/>
+<path class="lot" data-lot="12" d="M204.5 317.5 L204.6 331.5 L229.6 331.4 L229.5 317.4 Z"/>
+<path class="lot" data-lot="13" d="M312.6 322.9 L312.7 347.9 L326.7 347.8 L326.6 322.8 Z"/>
+<path class="lot" data-lot="14" d="M224.0 397.9 L224.0 410.4 L255.0 410.2 L255.0 397.7 Z"/>
+<path class="lot" data-lot="15" d="M140.0 410.9 L140.2 435.9 L154.2 435.8 L154.0 410.8 Z"/>
+<path class="lot" data-lot="16" d="M116.2 448.0 L116.4 474.0 L130.4 473.9 L130.2 447.9 Z"/>
+<path class="lot" data-lot="17" d="M112.0 411.0 L112.2 436.0 L126.2 436.0 L126.0 411.0 Z"/>
+<path class="lot" data-lot="18" d="M18.7 354.5 L18.8 368.5 L43.8 368.4 L43.7 354.4 Z"/>
+<path class="lot" data-lot="19" d="M-24.6 381.9 L-24.5 393.9 L0.5 393.8 L0.4 381.8 Z"/>
+<path class="lot" data-lot="20" d="M-219.0 299.0 L-219.0 311.0 L-194.0 310.9 L-194.0 298.9 Z"/>
+<path class="lot" data-lot="21" d="M-182.5 221.8 L-182.4 234.3 L-158.4 234.2 L-158.5 221.7 Z"/>
+<path class="lot" data-lot="22" d="M-219.8 161.0 L-219.7 173.0 L-194.7 172.9 L-194.8 160.9 Z"/>
+<path class="lot" data-lot="23" d="M-331.1 98.7 L-331.0 123.7 L-319.0 123.6 L-319.1 98.6 Z"/>
+<path class="lot" data-lot="24" d="M-245.1 98.2 L-245.1 110.7 L-220.1 110.6 L-220.1 98.1 Z"/>
+<path class="lot" data-lot="25" d="M-87.5 34.3 L-87.4 60.3 L-75.4 60.3 L-75.5 34.3 Z"/>
+<path class="lot" data-lot="26" d="M-13.8 71.9 L-13.7 98.9 L-1.2 98.8 L-1.3 71.9 Z"/>
+<line class="ptr" x1="422.1" y1="141.3" x2="397.5" y2="141.3"/><circle class="dot" cx="422.1" cy="141.3" r="2.1"/>
+<line class="ptr" x1="382.4" y1="103.8" x2="409.4" y2="103.8"/><circle class="dot" cx="382.4" cy="103.8" r="2.1"/>
+<line class="ptr" x1="346.3" y1="85.2" x2="365.3" y2="85.2"/><circle class="dot" cx="346.3" cy="85.2" r="2.1"/>
+<line class="ptr" x1="346.0" y1="48.2" x2="346.0" y2="23.7"/><circle class="dot" cx="346.0" cy="48.2" r="2.1"/>
+<line class="ptr" x1="332.4" y1="110.3" x2="332.4" y2="134.8"/><circle class="dot" cx="332.4" cy="110.3" r="2.1"/>
+<line class="ptr" x1="318.4" y1="110.4" x2="318.4" y2="85.8"/><circle class="dot" cx="318.4" cy="110.4" r="2.1"/>
+<line class="ptr" x1="282.3" y1="91.8" x2="255.3" y2="91.8"/><circle class="dot" cx="282.3" cy="91.8" r="2.1"/>
+<line class="ptr" x1="239.6" y1="54.8" x2="239.6" y2="36.2"/><circle class="dot" cx="239.6" cy="54.8" r="2.1"/>
+<line class="ptr" x1="135.0" y1="48.9" x2="135.0" y2="73.9"/><circle class="dot" cx="135.0" cy="48.9" r="2.1"/>
+<line class="ptr" x1="94.0" y1="229.4" x2="68.0" y2="229.4"/><circle class="dot" cx="94.0" cy="229.4" r="2.1"/>
+<line class="ptr" x1="216.4" y1="198.5" x2="191.8" y2="198.5"/><circle class="dot" cx="216.4" cy="198.5" r="2.1"/>
+<line class="ptr" x1="217.1" y1="324.4" x2="192.5" y2="324.4"/><circle class="dot" cx="217.1" cy="324.4" r="2.1"/>
+<line class="ptr" x1="319.6" y1="335.4" x2="319.6" y2="310.8"/><circle class="dot" cx="319.6" cy="335.4" r="2.1"/>
+<line class="ptr" x1="239.5" y1="404.1" x2="267.0" y2="404.1"/><circle class="dot" cx="239.5" cy="404.1" r="2.1"/>
+<line class="ptr" x1="147.1" y1="423.3" x2="147.1" y2="447.9"/><circle class="dot" cx="147.1" cy="423.3" r="2.1"/>
+<line class="ptr" x1="123.3" y1="461.0" x2="123.3" y2="486.0"/><circle class="dot" cx="123.3" cy="461.0" r="2.1"/>
+<line class="ptr" x1="119.1" y1="423.5" x2="119.1" y2="399.0"/><circle class="dot" cx="119.1" cy="423.5" r="2.1"/>
+<line class="ptr" x1="31.3" y1="361.5" x2="6.7" y2="361.5"/><circle class="dot" cx="31.3" cy="361.5" r="2.1"/>
+<line class="ptr" x1="-12.1" y1="387.9" x2="18.5" y2="387.9"/><circle class="dot" cx="-12.1" cy="387.9" r="2.1"/>
+<line class="ptr" x1="-206.5" y1="305.0" x2="-182.0" y2="305.0"/><circle class="dot" cx="-206.5" cy="305.0" r="2.1"/>
+<line class="ptr" x1="-170.4" y1="228.0" x2="-194.5" y2="228.0"/><circle class="dot" cx="-170.4" cy="228.0" r="2.1"/>
+<line class="ptr" x1="-207.3" y1="167.0" x2="-182.7" y2="167.0"/><circle class="dot" cx="-207.3" cy="167.0" r="2.1"/>
+<line class="ptr" x1="-325.1" y1="111.1" x2="-325.1" y2="135.7"/><circle class="dot" cx="-325.1" cy="111.1" r="2.1"/>
+<line class="ptr" x1="-232.6" y1="104.4" x2="-257.1" y2="104.4"/><circle class="dot" cx="-232.6" cy="104.4" r="2.1"/>
+<line class="ptr" x1="-81.4" y1="47.3" x2="-81.4" y2="72.3"/><circle class="dot" cx="-81.4" cy="47.3" r="2.1"/>
+<line class="ptr" x1="-7.5" y1="85.4" x2="10.8" y2="85.4"/><circle class="dot" cx="-7.5" cy="85.4" r="2.1"/>
+<g class="pk" data-n="1" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 1: manzana 63, lote 18" transform="translate(397.5 141.3) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="9.5" text-anchor="middle">1</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="2" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 2: manzana 74, lote 9" transform="translate(409.4 103.8) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="9.5" text-anchor="middle">2</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="3" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 3: manzana 74, lote 5" transform="translate(365.3 85.2) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="9.5" text-anchor="middle">3</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="4" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 4: manzana 62, lote 13" transform="translate(346.0 23.7) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="9.5" text-anchor="middle">4</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="5" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 5: manzana 74, lote 13" transform="translate(332.4 134.8) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="9.5" text-anchor="middle">5</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="6" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 6: manzana 74, lote 14" transform="translate(318.4 85.8) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="9.5" text-anchor="middle">6</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="7" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 7: manzana 74, lote 18" transform="translate(255.3 91.8) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="9.5" text-anchor="middle">7</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="8" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 8: manzana 61, lote 19" transform="translate(239.6 36.2) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="9.5" text-anchor="middle">8</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="9" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 9: manzana 61, lote 26" transform="translate(135.0 73.9) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="9.5" text-anchor="middle">9</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="10" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 10: manzana 84, lote 15" transform="translate(68.0 229.4) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">10</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="11" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 11: manzana 85, lote 14" transform="translate(191.8 198.5) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">11</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="12" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 12: manzana 100, lote 14" transform="translate(192.5 324.4) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">12</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="13" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 13: manzana 113, lote 3" transform="translate(319.6 310.8) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">13</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="14" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 14: manzana 119, lote 11" transform="translate(267.0 404.1) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">14</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="15" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 15: manzana 119, lote 19" transform="translate(147.1 447.9) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">15</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="16" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 16: manzana 125, lote 7" transform="translate(123.3 486.0) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">16</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="17" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 17: manzana 119, lote 21" transform="translate(119.1 399.0) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">17</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="18" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 18: manzana 98, lote 15" transform="translate(6.7 361.5) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">18</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="19" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 19: manzana 97, lote 8" transform="translate(18.5 387.9) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">19</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="20" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 20: manzana 95, lote 6" transform="translate(-182.0 305.0) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">20</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="21" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 21: manzana 82, lote 19" transform="translate(-194.5 228.0) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">21</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="22" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 22: manzana 80, lote 5" transform="translate(-182.7 167.0) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">22</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="23" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 23: manzana 69, lote 15" transform="translate(-325.1 135.7) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">23</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="24" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 24: manzana 70, lote 29" transform="translate(-257.1 104.4) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">24</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="25" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 25: manzana 60, lote 27" transform="translate(-81.4 72.3) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">25</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+<g class="pk" data-n="26" tabindex="0" role="button" aria-pressed="false" aria-label="Casa 26: manzana 71, lote 4" transform="translate(10.8 85.4) scale(1.25)"><circle class="hit" r="13"/><circle class="halo" r="17" fill="url(#glow)"/><circle class="ring" r="13.5"/><path class="stem" d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8"/><g class="body"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g><text class="num" x="0" y="5" font-size="8.2" text-anchor="middle">26</text><g class="face"><path d="M-5.6 -0.4 L-3.3 -4.3 L-1.1 -0.4 Z"/><path d="M1.1 -0.4 L3.3 -4.3 L5.6 -0.4 Z"/><path d="M-6 2.6 Q0 9.6 6 2.6 L4.2 3.4 L3.2 5.2 L2 3.9 L0.6 5.6 L-0.6 3.9 L-2 5.6 L-3.2 3.9 L-4.3 5.2 Z"/></g></g>
+</svg>
+</div>
+<p class="hint" id="hint">Deslizá el mapa hacia los costados para ver los dos barrios.</p>
+
+<h2>Las 26 casas</h2>
+<ul class="list" id="list"></ul>
+
+<div class="foot">
+  <p>Andá siempre con un adulto y visitá solo las casas marcadas.<br>Tu avance queda guardado en este celular.</p>
+  <button class="reset" id="reset" type="button">Empezar de nuevo</button>
+</div>
+<p class="sr" id="live" aria-live="polite"></p>
+</main>
+<script>
+(function(){
+  var HOUSES=[{"n": 1, "mz": "63", "lote": 18, "x": 397.5, "barrio": "Pampas"}, {"n": 2, "mz": "74", "lote": 9, "x": 409.4, "barrio": "Pampas"}, {"n": 3, "mz": "74", "lote": 5, "x": 365.3, "barrio": "Pampas"}, {"n": 4, "mz": "62", "lote": 13, "x": 346.0, "barrio": "Pampas"}, {"n": 5, "mz": "74", "lote": 13, "x": 332.4, "barrio": "Pampas"}, {"n": 6, "mz": "74", "lote": 14, "x": 318.4, "barrio": "Pampas"}, {"n": 7, "mz": "74", "lote": 18, "x": 255.3, "barrio": "Pampas"}, {"n": 8, "mz": "61", "lote": 19, "x": 239.6, "barrio": "Pampas"}, {"n": 9, "mz": "61", "lote": 26, "x": 135.0, "barrio": "Pampas"}, {"n": 10, "mz": "84", "lote": 15, "x": 68.0, "barrio": "Pampas"}, {"n": 11, "mz": "85", "lote": 14, "x": 191.8, "barrio": "Pampas"}, {"n": 12, "mz": "100", "lote": 14, "x": 192.5, "barrio": "Pampas"}, {"n": 13, "mz": "113", "lote": 3, "x": 319.6, "barrio": "Pampas"}, {"n": 14, "mz": "119", "lote": 11, "x": 267.0, "barrio": "Pampas"}, {"n": 15, "mz": "119", "lote": 19, "x": 147.1, "barrio": "Pampas"}, {"n": 16, "mz": "125", "lote": 7, "x": 123.3, "barrio": "Pampas"}, {"n": 17, "mz": "119", "lote": 21, "x": 119.1, "barrio": "Pampas"}, {"n": 18, "mz": "98", "lote": 15, "x": 6.7, "barrio": "Pampas"}, {"n": 19, "mz": "97", "lote": 8, "x": 18.5, "barrio": "Campos"}, {"n": 20, "mz": "95", "lote": 6, "x": -182.0, "barrio": "Campos"}, {"n": 21, "mz": "82", "lote": 19, "x": -194.5, "barrio": "Campos"}, {"n": 22, "mz": "80", "lote": 5, "x": -182.7, "barrio": "Campos"}, {"n": 23, "mz": "69", "lote": 15, "x": -325.1, "barrio": "Campos"}, {"n": 24, "mz": "70", "lote": 29, "x": -257.1, "barrio": "Campos"}, {"n": 25, "mz": "60", "lote": 27, "x": -81.4, "barrio": "Campos"}, {"n": 26, "mz": "71", "lote": 4, "x": 10.8, "barrio": "Campos"}];
+  var VX=-532.78, VW=1089.05;
+  var KEY='manantiales-halloween-2026';
+  var on={};
+  try{ var raw=localStorage.getItem(KEY); if(raw){ JSON.parse(raw).forEach(function(n){on[n]=true;}); } }catch(e){}
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(Object.keys(on).map(Number))); }catch(e){} }
+
+  var list=document.getElementById('list');
+  var PK='<svg viewBox="-11.5 -11 23 21" aria-hidden="true"><path d="M-0.6 -5.6 C -0.4 -8 0.8 -9.4 2.6 -9.8" fill="none" stroke="#2F6B2A" stroke-width="2" stroke-linecap="round"/>'+
+    '<g fill="#F47B20" stroke="#7A3300" stroke-width=".8"><ellipse cx="-5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="5.2" cy="1.5" rx="5.6" ry="7.2"/><ellipse cx="0" cy="1.5" rx="6" ry="7.8"/></g>'+
+    '<text x="0" y="5" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" fill="#24113F" font-size="{fs}">{n}</text></svg>';
+  HOUSES.forEach(function(h){
+    var li=document.createElement('li');
+    var b=document.createElement('button');
+    b.type='button'; b.className='row'; b.dataset.n=h.n;
+    b.innerHTML=PK.replace('{n}',h.n).replace('{fs}',h.n<10?'9.5':'8.2')+
+      '<span class="txt"><b>Manzana '+h.mz+', lote '+h.lote+'</b><small>'+h.barrio+'</small></span><span class="st" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+    b.addEventListener('click',function(){ toggle(h.n); });
+    li.appendChild(b); list.appendChild(li);
+  });
+
+  var pks=document.querySelectorAll('#map .pk');
+  pks.forEach(function(g){
+    var n=Number(g.getAttribute('data-n'));
+    g.addEventListener('click',function(){ toggle(n); });
+    g.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(n); } });
+  });
+
+  function house(n){ for(var i=0;i<HOUSES.length;i++){ if(HOUSES[i].n===n) return HOUSES[i]; } }
+  function nextN(){ for(var i=0;i<HOUSES.length;i++){ if(!on[HOUSES[i].n]) return HOUSES[i].n; } return null; }
+
+  function render(popN){
+    var count=0;
+    pks.forEach(function(g){
+      var n=Number(g.getAttribute('data-n')); var lit=!!on[n];
+      g.classList.toggle('on',lit); g.setAttribute('aria-pressed',lit?'true':'false');
+      if(lit) count++;
+    });
+    document.querySelectorAll('#map .lot').forEach(function(p){ p.classList.toggle('on',!!on[Number(p.getAttribute('data-lot'))]); });
+    document.querySelectorAll('#list .row').forEach(function(b){
+      var lit=!!on[Number(b.dataset.n)];
+      b.setAttribute('aria-pressed',lit?'true':'false');
+    });
+    var nn=nextN();
+    pks.forEach(function(g){ g.classList.toggle('next',Number(g.getAttribute('data-n'))===nn); });
+    document.getElementById('n').textContent=count;
+    document.getElementById('bar').style.width=(count/26*100)+'%';
+    var nx=document.getElementById('next'), dn=document.getElementById('done');
+    if(nn===null){ nx.hidden=true; dn.hidden=false; }
+    else{
+      nx.hidden=false; dn.hidden=true;
+      var h=house(nn);
+      document.getElementById('nextTxt').innerHTML='Próxima: <strong>calabaza '+h.n+'</strong>, manzana '+h.mz+', lote '+h.lote;
+    }
+    if(popN){
+      var g=document.querySelector('#map .pk[data-n="'+popN+'"]');
+      if(g){ g.classList.remove('pop'); void g.getBoundingClientRect(); g.classList.add('pop'); }
+    }
+  }
+
+  function toggle(n){
+    if(on[n]) delete on[n]; else on[n]=true;
+    save(); render(on[n]?n:null);
+    var h=house(n);
+    document.getElementById('live').textContent='Calabaza '+n+(on[n]?' encendida':' apagada')+'. Manzana '+h.mz+', lote '+h.lote+'.';
+    disarm();
+  }
+
+  var map=document.getElementById('map');
+  function scrollToHouse(n){
+    var h=house(n); var svg=map.querySelector('svg');
+    var x=(h.x-VX)/VW*svg.clientWidth;
+    map.scrollTo({left:Math.max(0,x-map.clientWidth/2),behavior:'smooth'});
+    map.scrollIntoView({behavior:'smooth',block:'center'});
+    var g=document.querySelector('#map .pk[data-n="'+n+'"]'); if(g){ try{ g.focus({preventScroll:true}); }catch(e){} }
+  }
+  document.getElementById('show').addEventListener('click',function(){ var nn=nextN(); if(nn) scrollToHouse(nn); });
+
+  function fitHint(){ document.getElementById('hint').hidden = map.scrollWidth <= map.clientWidth+2; }
+  window.addEventListener('resize',fitHint);
+
+  var reset=document.getElementById('reset'), armed=null;
+  function disarm(){ if(armed){ clearTimeout(armed); armed=null; } reset.classList.remove('armed'); reset.textContent='Empezar de nuevo'; }
+  reset.addEventListener('click',function(){
+    if(!armed){ reset.classList.add('armed'); reset.textContent='Tocá otra vez para apagar todas'; armed=setTimeout(disarm,4000); return; }
+    on={}; save(); disarm(); render();
+    document.getElementById('live').textContent='Se apagaron todas las calabazas.';
+  });
+
+  render();
+  requestAnimationFrame(function(){
+    fitHint();
+    var nn=nextN(); var h=house(nn||1); var svg=map.querySelector('svg');
+    map.scrollLeft=Math.max(0,(h.x-VX)/VW*svg.clientWidth-map.clientWidth/2);
+  });
+})();
+</script>
+</body>
+</html>
